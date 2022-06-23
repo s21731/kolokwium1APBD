@@ -26,8 +26,16 @@ namespace Kolokwium01.Controllers
         [HttpDelete("{idPatient}")]
         public IActionResult DeletePatient(int idPatient)
         {
-            _dbService.DeletePatient(idPatient);
-            return Ok($"Pacjent o id {idPatient} został usunięty z bazy danych");
+            if (string.IsNullOrEmpty(idPatient.ToString()))
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _dbService.DeletePatient(idPatient);
+                return Ok($"Pacjent o id {idPatient} został usunięty z bazy danych");
+            }
+
         }
 
 

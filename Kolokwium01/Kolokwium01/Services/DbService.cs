@@ -84,7 +84,54 @@ namespace Kolokwium01.Services
 
         }
 
+        public void DeletePatient(int idPatient)
+        {
 
+            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DefaultCon")))
+            {
+                con.Open();
+                SqlCommand com = new SqlCommand();
+                com.Connection = con;
+
+                List<int> listOfStudentsPrescriptions = new List<int>();
+
+                com.CommandText = $"SELECT IdPrescription FROM Prescription WHERE IdPatient = @idPatient";
+                com.Parameters.AddWithValue("@idPatient", idPatient);
+
+                var dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    listOfStudentsPrescriptions.Add(Int32.Parse(dr["IdPrescription"].ToString()));
+                }
+                dr.Close();
+
+
+                foreach(var idPrescription in listOfStudentsPrescriptions)
+                {
+                    com.CommandText = $"DELETE FROM Prescription_Medicament WHERE IdPrescription = {idPrescription}";
+                    com.ExecuteScalar();
+                }
+
+                com.CommandText = $"DELETE FROM Prescription WHERE IdPatient = {idPatient}";
+                //com.Parameters.AddWithValue("@idPatient", idPatient);
+                com.ExecuteScalar();
+
+                com.CommandText = $"DELETE FROM Patient WHERE IdPatient = {idPatient}";
+                //com.Parameters.AddWithValue("@idPatient", idPatient);
+                com.ExecuteScalar();
+
+
+            }
+
+
+
+
+
+
+
+
+
+        }
 
 
 
